@@ -1,39 +1,56 @@
-"""EDO y = f(t, y): RK2 (variante de Heun, o trapecio mejorado) y RK4 clásico."""
+"""EDO y(t)' = f(t, y): Runge-Kutta de 2.º orden (variante declarada) y de 4.º orden, paso fijo.
+
+RK2: variante por defecto = HEUN (trapecio explícito):  k1 = f(t,y); k2 = f(t+h, y+h k1); y+ = y + h/2 (k1+k2).
+     Alternativa: 'punto_medio':  k2 = f(t+h/2, y+h/2 k1);  y+ = y + h k2.   Ambas son de orden 2.
+"""
 import numpy as np
 
 
-def _paso_rk2(f, t, y, h):
-    """Heun: k1 = f(t, y); k2 = f(t+h, y+h k1); y' = y + h (k1 + k2) / 2."""
-    k1 = f(t, y)
-    k2 = f(t + h, y + h * k1)
-    return y + h * (k1 + k2) / 2
-
-
-def _paso_rk4(f, t, y, h):
-    k1 = f(t, y)
-    k2 = f(t + h / 2, y + h * k1 / 2)
-    k3 = f(t + h / 2, y + h * k2 / 2)
-    k4 = f(t + h, y + h * k3)
-    return y + h * (k1 + 2 * k2 + 2 * k3 + k4) / 6
-
-
-METODOS = {"RK2": _paso_rk2, "RK4": _paso_rk4}
-
-
-def integrar(metodo, f, t0, y0, h, n):
-    """Avanza n pasos de tamaño h. Devuelve (t, Y) con Y de forma (n+1, dim)."""
-    paso = METODOS[metodo]
-    y = np.atleast_1d(np.asarray(y0, float))
+def rk2(f, t0, y0, h, n, variante="heun"):
     t = t0 + h * np.arange(n + 1)
-    Y = np.zeros((n + 1, len(y)))
-    Y[0] = y
-    for k in range(n):
-        y = paso(f, t[k], y, h)
-        Y[k + 1] = y
-    return t, Y
+    y = np.zeros((n + 1, len(y0)))
+    y[0] = y0
+    for i in range(n):
+        k1 = np.asarray(f(t[i], y[i]), float)
+        if variante == "heun":
+            k2 = np.asarray(f(t[i] + h, y[i] + h * k1), float)
+            y[i + 1] = y[i] + h / 2 * (k1 + k2)
+        elif variante == "punto_medio":
+            k2 = np.asarray(f(t[i] + h / 2, y[i] + h / 2 * k1), float)
+            y[i + 1] = y[i] + h * k2
+        else:
+            raise ValueError("variante debe ser 'heun' o 'punto_medio'")
+    return t, y
 
 
-def orden_observado(hs, errores):
-    """Orden p estimado entre pasos consecutivos: p = log(e1/e2) / log(h1/h2)."""
-    return [float(np.log(errores[i] / errores[i + 1]) / np.log(hs[i] / hs[i + 1]))
-            if errores[i] > 0 and errores[i + 1] > 0 else None for i in range(len(hs) - 1)]
+def rk4(f, t0, y0, h, n):
+    t = t0 + h * np.arange(n + 1)
+    y = np.zeros((n + 1, len(y0)))
+    y[0] = y0
+    for i in range(n):
+        k1 = np.asarray(f(t[i], y[i]), float)
+        k2 = np.asarray(f(t[i] + h / 2, y[i] + h / 2 * k1), float)
+        k3 = np.asarray(f(t[i] + h / 2, y[i] + h / 2 * k2), float)
+        k4 = np.asarray(f(t[i] + h, y[i] + h * k3), float)
+        y[i + 1] = y[i] + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+    return t, y
+
+
+def factor_amplificacion(metodo, z):
+    """Función de estabilidad R(z), z = h·λ, para y' = λ y.  |R|<1: el esquema decae; |R|>1: crece."""
+    if metodo == "rk2":
+        return 1 + z + z ** 2 / 2
+    if metodo == "rk4":
+        return 1 + z + z ** 2 / 2 + z ** 3 / 6 + z ** 4 / 24
+    raise ValueError("metodo debe ser 'rk2' o 'rk4'")
+
+
+def orden_empirico(errores, hs):
+    """Orden p ≈ log2(e(h)/e(h/2)) para hs decrecientes a la mitad."""
+    ps = []
+    for i in range(1, len(errores)):
+        if errores[i] > 1e-15 and errores[i - 1] > 1e-15:
+            ps.append(float(np.log(errores[i - 1] / errores[i]) / np.log(hs[i - 1] / hs[i])))
+        else:
+            ps.append(None)
+    return ps

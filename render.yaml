@@ -1,0 +1,11 @@
+# Despliegue en Render (https://render.com). Plan gratuito: el disco es efímero => el historial se pierde al reiniciar.
+# Para conservar el historial use un disco persistente (plan de pago) o PythonAnywhere (ver docs/DESPLIEGUE.md).
+services:
+  - type: web
+    name: simtele-risk
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: SIMTELE_DB
+        value: /var/data/simtele.db

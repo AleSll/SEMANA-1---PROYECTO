@@ -1,0 +1,164 @@
+{
+ "descripcion": "Entradas de los 12 experimentos de la Semana 2 (4 módulos × 3 escenarios). Datos sintéticos. Se pueden pegar en POST /api/simular como {modulo, escenario, parametros}.",
+ "experimentos": [
+  {
+   "modulo": 1,
+   "nombre": "Detención de emergencia",
+   "escenario": "NORMAL",
+   "parametros": {
+    "v0": 5.0,
+    "a0": 0.5,
+    "c": 0.0,
+    "t_r": 1.5,
+    "d_disp": 60.0,
+    "h": 0.5,
+    "tol": 1e-10
+   }
+  },
+  {
+   "modulo": 1,
+   "nombre": "Detención de emergencia",
+   "escenario": "ESTRES",
+   "parametros": {
+    "v0": 8.0,
+    "a0": 0.4,
+    "c": 0.05,
+    "t_r": 1.5,
+    "d_disp": 60.0,
+    "h": 1.0,
+    "tol": 1e-10
+   }
+  },
+  {
+   "modulo": 1,
+   "nombre": "Detención de emergencia",
+   "escenario": "MAL_CONDICIONADO",
+   "parametros": {
+    "t_raiz": 10.0,
+    "t0": 5.0,
+    "eps": 1e-10,
+    "tol": 1e-10
+   }
+  },
+  {
+   "modulo": 2,
+   "nombre": "Deterioro y mantenimiento",
+   "escenario": "NORMAL",
+   "parametros": {
+    "D0": 0.1,
+    "alfa": 0.015,
+    "beta": 0.0005,
+    "D_umbral": 0.4,
+    "tol_raiz": 1e-10,
+    "tol_sis": 1e-08
+   }
+  },
+  {
+   "modulo": 2,
+   "nombre": "Deterioro y mantenimiento",
+   "escenario": "ESTRES",
+   "parametros": {
+    "D0": 0.1,
+    "alfa": 0.02,
+    "beta": 0.001,
+    "D_umbral": 0.4,
+    "tol_raiz": 1e-10,
+    "tol_sis": 1e-08,
+    "pert_pct": 5.0
+   }
+  },
+  {
+   "modulo": 2,
+   "nombre": "Deterioro y mantenimiento",
+   "escenario": "MAL_CONDICIONADO",
+   "parametros": {
+    "tol_sis": 1e-08,
+    "pert_pct": 5.0
+   }
+  },
+  {
+   "modulo": 3,
+   "nombre": "Oscilaciones por viento",
+   "escenario": "NORMAL",
+   "parametros": {
+    "m": 100.0,
+    "c": 40.0,
+    "k": 400.0,
+    "x0": 0.05,
+    "v0": 0.0,
+    "F0": 0.0,
+    "Omega": 0.0,
+    "T": 25.0,
+    "h": 0.05
+   }
+  },
+  {
+   "modulo": 3,
+   "nombre": "Oscilaciones por viento",
+   "escenario": "ESTRES",
+   "parametros": {
+    "m": 100.0,
+    "c": 40.0,
+    "k": 400.0,
+    "x0": 0.05,
+    "v0": 0.0,
+    "F0": 20.0,
+    "Omega": 1.9,
+    "T": 40.0,
+    "h": 0.05
+   }
+  },
+  {
+   "modulo": 3,
+   "nombre": "Oscilaciones por viento",
+   "escenario": "MAL_CONDICIONADO",
+   "parametros": {
+    "m": 100.0,
+    "c": 399.6,
+    "k": 400.0,
+    "x0": 0.05,
+    "v0": 0.0,
+    "F0": 0.0,
+    "Omega": 0.0,
+    "T": 25.0,
+    "h": 1.2
+   }
+  },
+  {
+   "modulo": 4,
+   "nombre": "Reconstrucción de sensores",
+   "escenario": "NORMAL",
+   "parametros": {
+    "n_nodos": 9,
+    "sigma": 0.0,
+    "semilla": 42,
+    "n_mc": 100,
+    "umbral": 0.5
+   }
+  },
+  {
+   "modulo": 4,
+   "nombre": "Reconstrucción de sensores",
+   "escenario": "ESTRES",
+   "parametros": {
+    "n_nodos": 9,
+    "sigma": 0.02,
+    "semilla": 42,
+    "n_mc": 200,
+    "umbral": 0.5
+   }
+  },
+  {
+   "modulo": 4,
+   "nombre": "Reconstrucción de sensores",
+   "escenario": "MAL_CONDICIONADO",
+   "parametros": {
+    "n_nodos": 21,
+    "sigma": 0.001,
+    "semilla": 42,
+    "n_mc": 100,
+    "umbral": 0.5
+   }
+  }
+ ]
+}

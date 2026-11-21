@@ -1,90 +1,85 @@
 """Interpolación: Lagrange, Newton (diferencias divididas) y spline cúbico natural."""
 import numpy as np
 
+from .sistemas_lineales import lu
 
-def lagrange(xn, yn):
-    """Devuelve P(x) = sum_i y_i L_i(x)."""
-    xn = np.asarray(xn, float); yn = np.asarray(yn, float)
 
-    def P(x):
-        x = np.asarray(x, float)
-        total = np.zeros_like(x)
-        for i in range(len(xn)):
-            Li = np.ones_like(x)
-            for j in range(len(xn)):
-                if j != i:
-                    Li = Li * (x - xn[j]) / (xn[i] - xn[j])
-            total = total + yn[i] * Li
-        return total
+def lagrange(xn, yn, x):
+    xn, yn, x = np.asarray(xn, float), np.asarray(yn, float), np.atleast_1d(np.asarray(x, float))
+    P = np.zeros_like(x)
+    for i in range(len(xn)):
+        L = np.ones_like(x)
+        for j in range(len(xn)):
+            if j != i:
+                L *= (x - xn[j]) / (xn[i] - xn[j])
+        P += yn[i] * L
     return P
 
 
 def diferencias_divididas(xn, yn):
-    """Tabla triangular de diferencias divididas; la primera fila de cada columna son los coeficientes."""
-    xn = np.asarray(xn, float)
+    """Tabla triangular de diferencias divididas. Devuelve la matriz (n×n); la fila 0 son los coeficientes."""
+    xn, yn = np.asarray(xn, float), np.asarray(yn, float)
     n = len(xn)
-    tabla = np.zeros((n, n))
-    tabla[:, 0] = yn
+    T = np.zeros((n, n))
+    T[:, 0] = yn
     for j in range(1, n):
         for i in range(n - j):
-            tabla[i, j] = (tabla[i + 1, j - 1] - tabla[i, j - 1]) / (xn[i + j] - xn[i])
-    return tabla
+            T[i, j] = (T[i + 1, j - 1] - T[i, j - 1]) / (xn[i + j] - xn[i])
+    return T
 
 
-def newton_dd(xn, yn):
-    """Devuelve (P, coeficientes, tabla): polinomio de Newton evaluado en forma anidada."""
+def newton_dd(xn, yn, x):
     xn = np.asarray(xn, float)
-    tabla = diferencias_divididas(xn, yn)
-    coef = tabla[0, :].copy()
-
-    def P(x):
-        x = np.asarray(x, float)
-        r = np.full_like(x, coef[-1])
-        for k in range(len(coef) - 2, -1, -1):
-            r = r * (x - xn[k]) + coef[k]
-        return r
-    return P, coef, tabla
+    c = diferencias_divididas(xn, yn)[0]
+    x = np.atleast_1d(np.asarray(x, float))
+    P = np.full_like(x, c[-1])
+    for k in range(len(c) - 2, -1, -1):        # esquema de Horner anidado
+        P = P * (x - xn[k]) + c[k]
+    return P
 
 
 def spline_natural(xn, yn):
-    """Spline cúbico natural (S'' = 0 en los extremos). Resuelve el sistema tridiagonal para S''."""
-    xn = np.asarray(xn, float); yn = np.asarray(yn, float)
+    """Spline cúbico natural (S''=0 en los extremos). Devuelve una función evaluable y las segundas derivadas M.
+
+    Las segundas derivadas salen de un sistema tridiagonal simétrico, diagonalmente dominante, que se resuelve con LU
+    (el mismo módulo de sistemas lineales de la Semana 1).
+    """
+    xn, yn = np.asarray(xn, float), np.asarray(yn, float)
     n = len(xn) - 1
     h = np.diff(xn)
     M = np.zeros(n + 1)
     if n >= 2:
-        a = h[:-1].copy(); b = 2 * (h[:-1] + h[1:]); c = h[1:].copy()
-        d = 6 * ((yn[2:] - yn[1:-1]) / h[1:] - (yn[1:-1] - yn[:-2]) / h[:-1])
-        for i in range(1, n - 1):                       # eliminación hacia adelante (Thomas)
-            w = a[i] / b[i - 1]
-            b[i] -= w * c[i - 1]
-            d[i] -= w * d[i - 1]
-        m = np.zeros(n - 1)
-        m[-1] = d[-1] / b[-1]
-        for i in range(n - 3, -1, -1):                  # sustitución regresiva
-            m[i] = (d[i] - c[i] * m[i + 1]) / b[i]
-        M[1:n] = m
+        A = np.zeros((n - 1, n - 1))
+        r = np.zeros(n - 1)
+        for i in range(1, n):
+            A[i - 1, i - 1] = 2 * (h[i - 1] + h[i])
+            if i > 1:
+                A[i - 1, i - 2] = h[i - 1]
+            if i < n - 1:
+                A[i - 1, i] = h[i]
+            r[i - 1] = 6 * ((yn[i + 1] - yn[i]) / h[i] - (yn[i] - yn[i - 1]) / h[i - 1])
+        M[1:n] = lu(A, r).x
 
     def S(x):
-        x = np.asarray(x, float)
+        x = np.atleast_1d(np.asarray(x, float))
         i = np.clip(np.searchsorted(xn, x) - 1, 0, n - 1)
         hi = h[i]
-        A = (xn[i + 1] - x) / hi
-        B = (x - xn[i]) / hi
-        return (A * yn[i] + B * yn[i + 1]
-                + ((A ** 3 - A) * M[i] + (B ** 3 - B) * M[i + 1]) * hi ** 2 / 6)
-    return S
+        a, b = xn[i + 1] - x, x - xn[i]
+        return (M[i] * a ** 3 + M[i + 1] * b ** 3) / (6 * hi) + (yn[i] / hi - M[i] * hi / 6) * a \
+            + (yn[i + 1] / hi - M[i + 1] * hi / 6) * b
+
+    return S, M
 
 
-def constante_lebesgue(xn, puntos=2000):
-    """Constante de Lebesgue de los nodos: amplificación máxima de perturbaciones en los datos."""
+def constante_lebesgue(xn, puntos=4001):
+    """Λ = max_x Σ|L_i(x)|: factor máximo con que la interpolación polinomial amplifica errores en los datos."""
     xn = np.asarray(xn, float)
-    t = np.linspace(xn[0], xn[-1], puntos)
-    suma = np.zeros_like(t)
+    x = np.linspace(xn.min(), xn.max(), puntos)
+    S = np.zeros_like(x)
     for i in range(len(xn)):
-        Li = np.ones_like(t)
+        L = np.ones_like(x)
         for j in range(len(xn)):
             if j != i:
-                Li = Li * (t - xn[j]) / (xn[i] - xn[j])
-        suma += np.abs(Li)
-    return float(suma.max())
+                L *= (x - xn[j]) / (xn[i] - xn[j])
+        S += np.abs(L)
+    return float(S.max())
