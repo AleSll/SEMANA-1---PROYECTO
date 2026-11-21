@@ -27,7 +27,7 @@ La versión publicada mediante GitHub Pages ejecuta los cálculos en el navegado
 
 ## Cómo iniciar la aplicación
 
-### Opción A. Ejecución local (recomendada para la defensa)
+### Opción A. Ejecución local
 
 **Requisitos:**
 - Python 3.9 o superior.
