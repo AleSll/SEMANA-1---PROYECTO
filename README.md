@@ -3,259 +3,237 @@
 
 **Proyecto integrador final de Métodos Numéricos (INF-373)**  
 Carrera de Informática · Facultad de Ciencias Puras y Naturales  
-Universidad Mayor de San Andrés (UMSA) · La Paz, Bolivia
+Universidad Mayor de San Andrés (UMSA) · La Paz, Bolivia.
 
 **Docente:** Lic. Brígida Alexandra Carvajal Blanco.
 
-SIMTELE-RISK es una aplicación web educativa que implementa, compara y verifica métodos numéricos mediante cuatro casos de estudio inspirados en un sistema de transporte por cable, como Mi Teleférico.
+SIMTELE-RISK es una aplicación web educativa que estudia y resuelve, mediante métodos numéricos, cuatro casos de estudio inspirados en un sistema de transporte por cable como Mi Teleférico.
 
-El proyecto integra algoritmos numéricos, visualización de resultados, interpretación de errores y almacenamiento de experimentos.
+El proyecto integra algoritmos numéricos, simulaciones, comparación de métodos, análisis de errores, visualización de resultados y persistencia de experimentos.
 
-> **Consideración importante:** todos los datos utilizados son sintéticos y los parámetros son supuestos con fines académicos. La aplicación no tiene conexión con equipos reales, no realiza diagnósticos operativos y no atribuye fallas a ninguna empresa.
+> **Consideración importante:** todos los datos son sintéticos y los parámetros son supuestos con fines académicos. El sistema no se conecta con equipos reales, no realiza diagnósticos operativos ni atribuye fallas a ninguna empresa.
 
 ## Integrantes
 
-- Huaricona Laurel Najib Brayan.  (mención: Desarrollo de Software e Innovación Tecnológica)
+- Huaricona Laurel Najib Brayan (mención: Desarrollo de Software e Innovación Tecnológica).
 - Salgado Llusco Carlos Alejandro (mención: Desarrollo de Software e Innovación Tecnológica).
 
-## Aplicación en línea
+## Enlaces del proyecto
 
-- **Aplicación web:** https://alesll.github.io/SEMANA-1---PROYECTO/frontend/
-- **Repositorio:** https://github.com/AleSll/SEMANA-1---PROYECTO
+- **Repositorio GitHub:** https://github.com/AleSll/SEMANA-1---PROYECTO
+- **Aplicación publicada:** https://alesll.github.io/SEMANA-1---PROYECTO/frontend/
+- **Video de presentación:** Pendiente de publicación.
 
-La versión publicada mediante GitHub Pages ejecuta los cálculos en el navegador utilizando Python con Pyodide.
+## Módulos y métodos numéricos
 
-## Cómo iniciar la aplicación
+La aplicación contempla cuatro módulos, cada uno con tres escenarios de experimentación: NORMAL, ESTRÉS y MAL CONDICIONADO.
 
-### Opción A. Ejecución local
-
-**Requisitos:**
-- Python 3.9 o superior.
-- Conexión a Internet para instalar las dependencias.
-
-**Pasos:**
-
-1. Clonar el repositorio:
-
-   ```bash
-   git clone https://github.com/AleSll/SEMANA-1---PROYECTO.git
-   ```
-
-2. Ingresar a la carpeta:
-
-   ```bash
-   cd SEMANA-1---PROYECTO
-   ```
-
-3. Instalar las dependencias:
-
-   ```bash
-   python -m pip install -r requirements.txt
-   ```
-
-4. Iniciar la aplicación:
-
-   ```bash
-   python iniciar.py
-   ```
-
-   En Windows también se puede ejecutar mediante doble clic en `iniciar.bat`.
-
-5. Abrir en el navegador:
-
-   http://127.0.0.1:5000/
-
-### Opción B. Ejecución en línea (GitHub Pages)
-
-1. Abrir el enlace de la aplicación.
-2. Esperar a que se cargue el entorno Python mediante Pyodide.
-3. Seleccionar el módulo y escenario que se desea ejecutar.
-
-La primera carga requiere conexión a Internet para descargar los componentes necesarios de Pyodide.
-
-> No se recomienda abrir `frontend/index.html` directamente mediante doble clic (`file://`), ya que el navegador puede bloquear la carga de algunos recursos. Para la ejecución local se debe utilizar el servidor Flask.
-
-## Casos de estudio y escenarios
-
-La aplicación contempla cuatro módulos:
-
-| N.º | Módulo | Descripción |
+| Módulo | Métodos implementados | Referencia de validación |
 |---|---|---|
-| 1 | Detención de emergencia de cabinas | Análisis del movimiento y tiempo de detención mediante modelos matemáticos. |
-| 2 | Deterioro mecánico y mantenimiento | Estimación del comportamiento del deterioro y determinación de umbrales de mantenimiento. |
-| 3 | Oscilaciones por viento | Simulación del comportamiento dinámico de un sistema sometido a fuerzas externas. |
-| 4 | Reconstrucción de señales de sensores | Aproximación de datos mediante métodos de interpolación. |
+| 1. Detención de emergencia | RK2 (Heun), RK4, trapecio, Simpson 1/3, Romberg, bisección, Newton y secante. | Solución analítica para aceleración constante y modelo variable a = a₀ + c·v. |
+| 2. Deterioro y mantenimiento | Bisección, Newton, secante, Jacobi, Gauss-Seidel, LU y gradiente conjugado. | Fórmula cuadrática y solución conocida x* para sistemas b = A·x*. |
+| 3. Oscilaciones por viento | RK2, RK4, trapecio, Simpson 1/3 y Romberg aplicados a la integral de x². | Solución analítica contrastada con DOP853 (rtol = 10⁻¹²). |
+| 4. Reconstrucción de sensores | Lagrange, Newton por diferencias divididas, spline cúbico natural, bisección y secante para cruces de umbral. | Función sin(t) evaluada en puntos de prueba ocultos. |
 
-Cada módulo contempla tres escenarios:
+### Análisis de errores
 
-- **NORMAL:** representa condiciones de referencia.
-- **ESTRÉS:** introduce condiciones más exigentes para evaluar el comportamiento de los métodos.
-- **MAL CONDICIONADO:** analiza situaciones de sensibilidad numérica y dificultades de estabilidad o convergencia.
+La teoría de errores se aplica transversalmente a los cuatro módulos:
 
-Los experimentos presentan resultados numéricos, tablas de iteraciones, errores, gráficos e interpretaciones.
+- Error absoluto.
+- Error relativo, evitando divisiones entre cero.
+- Error porcentual.
+- Error residual.
+- Análisis de sensibilidad.
+- Número de condición (κ).
+- Constante de Lebesgue.
+- Orden empírico de convergencia.
 
-## Métodos numéricos implementados
-
-| Área | Métodos |
-|---|---|
-| Sistemas lineales | Jacobi, Gauss-Seidel, descomposición LU y gradiente conjugado. |
-| Ecuaciones no lineales | Bisección, Newton-Raphson y secante. |
-| Interpolación | Lagrange, Newton por diferencias divididas y spline cúbico. |
-| Integración numérica | Trapecio compuesto, Simpson 1/3 compuesto y Romberg. |
-| Ecuaciones diferenciales ordinarias | Runge-Kutta de segundo orden (Heun) y Runge-Kutta de cuarto orden (RK4). |
-| Análisis de errores | Error absoluto, relativo, porcentual, residuo y sensibilidad numérica. |
-
-## Estado del proyecto
+## Estado del proyecto — Semana 2
 
 | Componente | Estado |
 |---|---|
-| Teoría de errores y sistemas lineales | Implementado y con pruebas. |
-| Métodos de raíces, interpolación e integración | Implementados y con pruebas. |
-| Métodos numéricos para EDO | Implementados y con pruebas. |
-| Cuatro módulos y tres escenarios | Implementados en `motor_numerico/casos.py`. |
-| Interfaz web | Implementada en `frontend/`. |
-| Servicio de ejecución y validación | Implementado en `backend/`. |
-| Base de datos SQLite | Implementada para almacenar y recuperar simulaciones. |
-| Pruebas automatizadas | Incluyen algoritmos, API y persistencia. |
-| Informe final, video y conclusiones integradoras | Pendiente (Semana 3). |
+| Interpolación, raíces, integración y EDO | Implementados y probados en `motor_numerico/`. |
+| Cuatro módulos y tres escenarios por módulo | Implementados en `motor_numerico/modulos/`. |
+| Tablas de resultados, errores, gráficos y conclusiones | Implementados en los experimentos. |
+| API Flask y validación de parámetros | Implementadas en `backend/app.py`. |
+| Base de datos SQLite | Implementada mediante `db/schema.sql` y `backend/db.py`. |
+| Guardar, recuperar y relanzar simulaciones | Implementado y probado. |
+| Interfaz web: inicio, módulos, comparación e historial | Implementada en `frontend/index.html`. |
+| Conclusiones finales, defensa y video | Pendientes para la Semana 3. |
 
-## Arquitectura y estructura del repositorio
+## Estructura del proyecto
 
-El proyecto está organizado en módulos independientes para separar la interfaz, la lógica numérica, el servicio de almacenamiento y las pruebas.
+La aplicación utiliza una arquitectura modular que separa la interfaz web, el servicio de persistencia, los algoritmos numéricos y los experimentos.
 
 ```text
 SEMANA-1---PROYECTO/
 │
-├── iniciar.py
-├── iniciar.bat
-├── index.html
+├── README.md
 ├── requirements.txt
 ├── pytest.ini
-├── .gitignore
+├── Procfile
+├── render.yaml
+├── wsgi.py
 │
 ├── backend/
-│   ├── __init__.py
 │   ├── app.py
-│   ├── servicio.py
-│   └── validacion.py
+│   └── db.py
 │
 ├── motor_numerico/
-│   ├── __init__.py
 │   ├── errores.py
 │   ├── sistemas_lineales.py
 │   ├── raices.py
-│   ├── interpolacion.py
 │   ├── integracion.py
 │   ├── edo.py
-│   ├── casos.py
-│   ├── interpretacion.py
-│   ├── experimento_semana1.py
-│   └── experimento_semana2.py
+│   ├── interpolacion.py
+│   └── modulos/
+│       ├── módulos y casos de estudio
+│       └── escenarios NORMAL, ESTRÉS y MAL CONDICIONADO
 │
 ├── frontend/
-│   ├── index.html
-│   ├── app.js
-│   ├── transporte.js
-│   └── prototipo_semana1.html
+│   └── index.html
 │
 ├── db/
 │   ├── schema.sql
 │   └── DER_SIMTELE_RISK.png
 │
 ├── datos_ejemplo/
-│   ├── sistemas_semana1.json
-│   └── resultados_semana2.json
+│   ├── entradas de la Semana 1
+│   └── experimentos_semana2.json
+│
+├── scripts/
+│   ├── prueba_persistencia.py
+│   └── generar_der.py
 │
 ├── tests/
-│   ├── test_sistemas_lineales.py
-│   ├── test_raices.py
-│   ├── test_interpolacion.py
-│   ├── test_integracion.py
-│   ├── test_edo.py
-│   ├── test_app.py
-│   ├── test_casos.py
-│   └── test_servicio.py
+│   ├── pruebas de métodos numéricos
+│   ├── pruebas de módulos
+│   └── pruebas de persistencia
 │
 └── docs/
-    └── Documentación del proyecto
+    ├── informes semanales
+    └── DESPLIEGUE.md
 ```
 
-## Funcionamiento general
+## Instalación y ejecución local
 
-El sistema está dividido en tres componentes principales:
+### Requisitos
 
-**1. Frontend**
+- Python 3.9 o superior.
+- pip.
+- Git.
+- Navegador web actualizado.
 
-Proporciona la interfaz web para seleccionar módulos, escenarios, métodos numéricos y parámetros. También permite visualizar resultados, gráficos, errores e historial de simulaciones.
-
-**2. Backend**
-
-Implementa el servicio de ejecución y validación mediante Flask. Recibe los parámetros, ejecuta los casos de estudio y administra el almacenamiento de los experimentos.
-
-**3. Motor numérico**
-
-Contiene los algoritmos matemáticos independientes de la interfaz. Cada método puede ejecutarse y probarse mediante datos de entrada y soluciones de referencia.
-
-### Modalidades de ejecución
-
-- **Con servidor:** `backend/app.py` administra las solicitudes y utiliza SQLite para guardar y recuperar simulaciones. La base de datos se almacena localmente en `simtele.db`.
-- **Sin servidor:** `frontend/transporte.js` utiliza Pyodide para ejecutar el código Python en el navegador. El almacenamiento SQLite se conserva en IndexedDB del navegador.
-
-En la modalidad sin servidor se requiere conexión a Internet durante la primera carga de Pyodide.
-
-## Ejecución de experimentos y pruebas
-
-Desde la carpeta principal del proyecto se pueden ejecutar los siguientes comandos:
-
-**Iniciar la aplicación web:**
+### 1. Clonar el repositorio
 
 ```bash
-python iniciar.py
+git clone https://github.com/AleSll/SEMANA-1---PROYECTO.git
+cd SEMANA-1---PROYECTO
 ```
 
-**Iniciar directamente el backend:**
+### 2. Crear el entorno virtual
+
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Si PowerShell bloquea la activación, también puedes ejecutar los comandos de instalación utilizando:
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+**Linux o macOS:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Instalar dependencias
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 4. Iniciar la aplicación
 
 ```bash
 python -m backend.app
 ```
 
-**Ejecutar los experimentos de la Semana 2:**
+Abrir en el navegador:
 
-```bash
-python -m motor_numerico.experimento_semana2
-```
+http://127.0.0.1:5000/
 
-**Ejecutar un módulo y escenario específico:**
-
-```bash
-python -m motor_numerico.experimento_semana2 3 ESTRES
-```
-
-**Ejecutar las pruebas automatizadas:**
+### 5. Ejecutar las pruebas
 
 ```bash
 pytest
 ```
 
-## Resultados numéricos de referencia
+Las pruebas verifican los métodos numéricos, los casos de estudio y el funcionamiento de la persistencia.
 
-Los siguientes resultados corresponden a los modelos sintéticos y configuraciones utilizadas en los experimentos del proyecto.
+### 6. Ejecutar la prueba de persistencia
 
-| Módulo | Escenario | Resultado de referencia |
-|---|---|---|
-| 1. Detención | NORMAL | Tiempo de detención: 10 s. Distancia de frenado: 25 m. RK2 y RK4 obtienen resultados exactos para aceleración constante. |
-| 1. Detención | MAL CONDICIONADO | Modelo con raíz doble: Newton converge linealmente (36 iteraciones), Newton modificado en 1 iteración. La bisección no aplica directamente. |
-| 2. Deterioro | NORMAL / ESTRÉS | Tiempo estimado: 13.72 y 9.26 meses, respectivamente. |
-| 2. Deterioro | MAL CONDICIONADO | Umbral 0.20 → 0.2001 separa la raíz doble en 19.55 y 20.45. Jacobi diverge (ρ = 2.895), Gauss-Seidel requiere 3230 iteraciones y CG 5 iteraciones. |
-| 3. Oscilaciones | NORMAL / ESTRÉS | El error de RK2 presenta comportamiento proporcional a h² y el de RK4 a h⁴. En resonancia, la amplitud estacionaria es 0.25 m. |
-| 4. Sensores | NORMAL | Con 9 nodos, el error de Lagrange/Newton es ≤ 2.0 × 10⁻⁴ y el del spline es ≤ 8.9 × 10⁻⁴. |
-| 4. Sensores | MAL CONDICIONADO | Con 20 nodos equiespaciados y ruido, Lagrange presenta error 1.35 frente a 8 × 10⁻⁴ del spline. El condicionamiento de Vandermonde es κ = 4.7 × 10²². |
+```bash
+python -m scripts.prueba_persistencia
+```
+
+Esta prueba verifica el flujo:
+
+1. Ejecutar una simulación.
+2. Guardar los resultados.
+3. Reiniciar el servicio.
+4. Recuperar la simulación.
+5. Repetir el experimento.
+6. Comparar los resultados.
+
+### 7. Ejecutar experimentos de la Semana 1
+
+```bash
+python -m motor_numerico.experimento_semana1
+```
+
+## Persistencia y almacenamiento
+
+La aplicación utiliza SQLite para almacenar los experimentos y permitir su recuperación.
+
+La estructura de la base de datos se define en `db/schema.sql`.
+
+La ubicación predeterminada de almacenamiento es:
+
+```text
+data/simtele.db
+```
+
+También se puede configurar una ruta personalizada mediante la variable de entorno `SIMTELE_DB`.
+
+La persistencia permite conservar los parámetros, escenarios, métodos ejecutados y resultados de las simulaciones.
+
+## Resultados numéricos verificables
+
+Los siguientes resultados corresponden a los parámetros de referencia utilizados en los experimentos del proyecto.
+
+| Experimento | Resultado de referencia |
+|---|---|
+| M1 NORMAL | Tiempo de detención: 10 s. Distancia total: 32.5 m. RK2 y RK4 exactos para la solución polinomial. |
+| M1 ESTRÉS | Con a = a₀ + c·v: t_det = 13.863 s y d_total = 61.10 m. Error máximo RK2: 4.7 × 10⁻² m; RK4: 5.8 × 10⁻⁶ m. |
+| M1 MAL CONDICIONADO | Raíz doble: Newton requiere 36 iteraciones, con razón de convergencia 0.5; Newton modificado requiere 1. La bisección no aplica directamente. |
+| M2 NORMAL | Tiempo estimado: 13.7228 meses. Jacobi: 24 iteraciones; Gauss-Seidel: 13; CG: 4. |
+| M2 MAL CONDICIONADO | κ₂ = 10⁴. Jacobi diverge (ρ = 2.895); Gauss-Seidel: 3230 iteraciones; CG: 5. Amplificación: ×880. |
+| M3 ESTRÉS | Casi resonancia: amplitud máxima de 0.235 m. Error RK2: 3.3 × 10⁻³ m; RK4: 1.6 × 10⁻⁶ m. |
+| M3 MAL CONDICIONADO | ζ = 0.999 y h = 1.2 s. RK2 diverge (‖R‖ = 1.45 > 1), mientras RK4 permanece estable. |
+| M4 MAL CONDICIONADO | 21 nodos y σ = 10⁻³. Constante de Lebesgue Λ ≈ 1.1 × 10⁴. Error del polinomio ≈ 1.5 frente a ≈ 2 × 10⁻³ del spline. |
 
 ## Modelo de datos
 
-La persistencia utiliza SQLite y se define en:
+El modelo de datos utiliza SQLite y se encuentra definido en:
 
-- `db/schema.sql`: estructura de la base de datos.
+- `db/schema.sql`: definición de las tablas y relaciones.
 - `db/DER_SIMTELE_RISK.png`: diagrama entidad-relación.
 
 Las principales entidades son:
@@ -267,24 +245,26 @@ Las principales entidades son:
 - `iteracion_resultado`
 - `resultado_resumen`
 
-El sistema almacena la información de los experimentos, incluyendo los parámetros, métodos ejecutados, iteraciones, errores y resultados. El resultado completo del módulo se conserva en formato JSON dentro de `resultado_resumen.valor_json`.
+La estructura permite registrar los experimentos y conservar sus resultados para posteriores consultas y comparaciones.
 
-## Publicación en GitHub Pages
+## Publicación y despliegue
 
-Para publicar la interfaz web:
+El proyecto contempla archivos de configuración para despliegue:
 
-1. Ingresar al repositorio en GitHub.
-2. Abrir **Settings → Pages**.
-3. En **Build and deployment**, seleccionar **Deploy from a branch**.
-4. Seleccionar la rama `main` y la carpeta `/ (root)` o la configuración correspondiente al despliegue.
-5. Guardar los cambios.
+- `Procfile`
+- `render.yaml`
+- `wsgi.py`
 
-La dirección pública configurada para el proyecto es:
+La guía de configuración y publicación se encuentra en:
+
+`docs/DESPLIEGUE.md`
+
+Aplicación publicada:
 
 https://alesll.github.io/SEMANA-1---PROYECTO/frontend/
 
 ## Aviso académico
 
-SIMTELE-RISK es un proyecto académico desarrollado con fines educativos y de experimentación numérica.
+SIMTELE-RISK es un proyecto académico desarrollado exclusivamente con fines educativos y de experimentación numérica.
 
-Los resultados representan exclusivamente el comportamiento de los modelos matemáticos sintéticos implementados. No deben interpretarse como mediciones, diagnósticos, predicciones operativas ni evaluaciones de seguridad de un sistema de transporte real.
+Los resultados representan únicamente el comportamiento de los modelos matemáticos sintéticos implementados. No deben interpretarse como mediciones reales, diagnósticos, predicciones operativas ni evaluaciones de seguridad de un sistema de transporte existente.
