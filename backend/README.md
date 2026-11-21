@@ -1,5 +1,10 @@
 # backend/
 
-API de SIMTELE-RISK: rutas, validación de parámetros y acceso a datos (SQLite, `db/schema.sql`).
+- `servicio.py`: ejecuta los módulos, valida parámetros y guarda/recupera simulaciones en SQLite
+  (`db/schema.sql`). Es la misma lógica que usa Flask y el navegador (Pyodide).
+- `validacion.py`: validación de los parámetros de cada módulo y escenario.
+- `app.py`: API Flask + servidor de la interfaz.
 
-Estado: pendiente (Semana 2). El motor numérico ya existe en `motor_numerico/` y se puede invocar desde aquí sin cambios.
+```bash
+python -m backend.app          # http://127.0.0.1:5000/  (base de datos: simtele.db)
+```
