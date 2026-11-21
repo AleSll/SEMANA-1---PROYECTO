@@ -12,7 +12,7 @@ Aplicación web educativa que resuelve, compara y verifica con métodos numéric
 
 ## Aplicación en línea
 
-- **Aplicación:** `https://TU-USUARIO.github.io/simtele-risk/` (GitHub Pages; el cálculo se hace en el navegador con Python/Pyodide)
+- **Aplicación:** `https://alesll.github.io/SEMANA-1---PROYECTO/frontend/` (GitHub Pages; el cálculo se hace en el navegador con Python/Pyodide)
 - Repositorio: `https://github.com/TU-USUARIO/simtele-risk`
 
 ## Cómo iniciar la aplicación
