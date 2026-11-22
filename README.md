@@ -21,7 +21,7 @@ El proyecto integra algoritmos numéricos, simulaciones, comparación de método
 ## Enlaces del proyecto
 
 - **Repositorio GitHub:** https://github.com/AleSll/SEMANA-1---PROYECTO
-- **Aplicación publicada:** https://alesll.github.io/SEMANA-1---PROYECTO/frontend/
+- **Aplicación publicada:** https://simtele-risk-kctc.onrender.com/
 - **Video de presentación:** Pendiente de publicación.
 
 ## Módulos y métodos numéricos
